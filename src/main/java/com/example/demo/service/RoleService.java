@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import com.example.demo.entity.Menu;
 import java.time.LocalDateTime;
@@ -37,22 +38,6 @@ public class RoleService {
     private MenuRepository menuRepository;
 
     // 分页查询角色
-//    public Page<Role> getRolesByPage(int page, int size, String keyword) {
-//        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createTime"));
-//
-//        if (StringUtils.hasText(keyword)) {
-//            Specification<Role> spec = (root, query, cb) -> {
-//                List<Predicate> predicates = new ArrayList<>();
-//                predicates.add(cb.like(root.get("name"), "%" + keyword + "%"));
-//                predicates.add(cb.like(root.get("code"), "%" + keyword + "%"));
-//                predicates.add(cb.like(root.get("description"), "%" + keyword + "%"));
-//                return cb.or(predicates.toArray(new Predicate[0]));
-//            };
-//            return roleRepository.findAll(spec, pageable);
-//        }
-//
-//        return roleRepository.findAll(pageable);
-//    }
     public Page<Role> getRolesByPage(int page, int size, String keyword) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createTime"));
 
@@ -141,38 +126,8 @@ public class RoleService {
         roleMenuRepository.saveAll(roleMenus);
     }
 
-    // 修改 RoleService 中的 saveRoleMenus 方法：
-//    private void saveRoleMenus(Long roleId, List<String> menuPermissions) {
-//        if (menuPermissions == null || menuPermissions.isEmpty()) {
-//            return;
-//        }
-//
-//        // 先删除该角色原有的菜单权限
-//        roleMenuRepository.deleteByRoleId(roleId);
-//
-//        // 保存新的菜单权限 - 使用批量插入提高性能
-//        List<RoleMenu> roleMenus = new ArrayList<>();
-//        for (String menuCode : menuPermissions) {
-//            RoleMenu roleMenu = new RoleMenu();
-//            roleMenu.setRoleId(roleId);
-//            roleMenu.setMenuCode(menuCode);
-//            roleMenus.add(roleMenu);
-//        }
-//
-//        if (!roleMenus.isEmpty()) {
-//            roleMenuRepository.saveAll(roleMenus);
-//        }
-//    }
-
     // 创建角色
-//    public Role createRole(Role role) {
-//        if (roleRepository.existsByCode(role.getCode())) {
-//            throw new RuntimeException("角色代码已存在");
-//        }
-//        role.setCreateTime(LocalDateTime.now());
-//        role.setUpdateTime(LocalDateTime.now());
-//        return roleRepository.save(role);
-//    }
+    @Transactional
     public Role createRole(Role role) {
         if (roleRepository.existsByCode(role.getCode())) {
             throw new RuntimeException("角色代码已存在");
@@ -191,22 +146,7 @@ public class RoleService {
     }
 
     // 更新角色
-//    public Role updateRole(Long id, Role role) {
-//        Role existingRole = roleRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("角色不存在"));
-//
-//        if (roleRepository.existsByCodeAndIdNot(role.getCode(), id)) {
-//            throw new RuntimeException("角色代码已存在");
-//        }
-//
-//        existingRole.setName(role.getName());
-//        existingRole.setCode(role.getCode());
-//        existingRole.setDescription(role.getDescription());
-//        existingRole.setMenuPermissions(role.getMenuPermissions());
-//        existingRole.setUpdateTime(LocalDateTime.now());
-//
-//        return roleRepository.save(existingRole);
-//    }
+    @Transactional
     public Role updateRole(Long id, Role role) {
         Role existingRole = roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("角色不存在"));
@@ -229,11 +169,8 @@ public class RoleService {
         return updatedRole;
     }
 
-
     // 删除角色
-//    public void deleteRole(Long id) {
-//        roleRepository.deleteById(id);
-//    }
+    @Transactional
     public void deleteRole(Long id) {
         // 先删除菜单权限关联
         roleMenuRepository.deleteByRoleId(id);
@@ -242,9 +179,7 @@ public class RoleService {
     }
 
     // 批量删除角色
-//    public void deleteRoles(List<Long> ids) {
-//        roleRepository.deleteAllById(ids);
-//    }
+    @Transactional
     public void deleteRoles(List<Long> ids) {
         // 先删除菜单权限关联
         roleMenuRepository.deleteByRoleIdIn(ids);
@@ -263,9 +198,6 @@ public class RoleService {
     }
 
     // 根据角色ID获取角色
-//    public Optional<Role> getRoleById(Long id) {
-//        return roleRepository.findById(id);
-//    }
     public Optional<Role> getRoleById(Long id) {
         Optional<Role> roleOptional = roleRepository.findById(id);
 
