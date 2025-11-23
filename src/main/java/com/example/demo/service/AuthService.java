@@ -63,4 +63,15 @@ public class AuthService {
     public void logout(String token) {
         tokenStore.remove(token);
     }
+
+
+    public String getUserRoleByToken(String token) {
+        Long userId = tokenStore.get(token);
+        if (userId == null) {
+            return null;
+        }
+
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null ? user.getRole() : null;
+    }
 }

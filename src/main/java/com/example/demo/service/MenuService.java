@@ -1,15 +1,17 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Menu;
+import com.example.demo.entity.Role;
+import com.example.demo.entity.RoleMenu;
 import com.example.demo.repository.MenuRepository;
+import com.example.demo.repository.RoleMenuRepository;
+import com.example.demo.repository.RoleRepository;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +20,12 @@ public class MenuService {
 
     @Resource
     private MenuRepository menuRepository;
+
+    @Resource
+    private RoleRepository roleRepository;
+
+    @Resource
+    private RoleMenuRepository roleMenuRepository;
 
     public List<Menu> getUserMenus() {
         // 构建树形菜单结构
@@ -134,5 +142,52 @@ public class MenuService {
         });
 
         return children;
+    }
+
+    public List<Menu> getMenuTreeByRole(String role) {
+        List<Menu> allMenus = menuRepository.findAllByOrderBySortAsc();
+
+        if ("super".equals(role)) {
+            // 超级管理员拥有所有菜单
+            return buildMenuTree(allMenus);
+        }
+
+        // 查询该角色拥有的菜单权限
+        List<Long> authorizedMenuIds = getAuthorizedMenuIdsByRole(role);
+
+        // 过滤出有权限的菜单
+        List<Menu> authorizedMenus = allMenus.stream()
+                .filter(menu -> authorizedMenuIds.contains(menu.getId()))
+                .collect(Collectors.toList());
+
+        return buildMenuTree(authorizedMenus);
+    }
+
+    // 修改获取授权菜单ID的方法，基于数据库查询
+    private List<Long> getAuthorizedMenuIdsByRole(String roleCode) {
+        try {
+            // 根据角色代码找到角色
+            Role role = roleRepository.findByCode(roleCode);
+            if (role == null) {
+                return new ArrayList<>();
+            }
+
+            // 查询该角色的菜单权限
+            List<RoleMenu> roleMenus = roleMenuRepository.findByRoleId(role.getId());
+
+            return roleMenus.stream()
+                    .map(roleMenu -> {
+                        try {
+                            return Long.valueOf(roleMenu.getMenuCode());
+                        } catch (NumberFormatException e) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            // 如果查询失败，返回空列表
+            return new ArrayList<>();
+        }
     }
 }

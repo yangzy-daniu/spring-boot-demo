@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Menu;
+import com.example.demo.service.AuthService;
 import com.example.demo.service.MenuService;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +20,9 @@ public class MenuController {
     @Resource
     private MenuService menuService;
 
+    @Resource
+    private AuthService authService;
+
     @GetMapping
     public List<Menu> getUserMenus() {
         return menuService.getUserMenus();
@@ -32,8 +35,41 @@ public class MenuController {
     }
 
     @GetMapping("/tree")
-    public List<Menu> getMenuTree() {
-        return menuService.getMenuTree();
+    public List<Menu> getMenuTree(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        // 验证token并获取用户角色
+        validateTokenAndRole(authHeader);
+
+        String userRole = getUserRoleFromToken(authHeader);
+
+        // 根据用户角色返回对应的菜单树
+        return menuService.getMenuTreeByRole(userRole);
+    }
+
+    // 添加辅助方法
+    private void validateTokenAndRole(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new AccessDeniedException("未授权访问");
+        }
+
+        String token = authHeader.replace("Bearer ", "");
+        if (token.isEmpty() || "undefined".equals(token) || "null".equals(token)) {
+            throw new AccessDeniedException("Token无效");
+        }
+    }
+
+    private String getUserRoleFromToken(String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+
+        if (!authService.validateToken(token)) {
+            throw new AccessDeniedException("Token无效或已过期");
+        }
+
+        String userRole = authService.getUserRoleByToken(token);
+        if (userRole == null) {
+            throw new AccessDeniedException("用户角色信息不存在");
+        }
+
+        return userRole;
     }
 
     @GetMapping("/search")

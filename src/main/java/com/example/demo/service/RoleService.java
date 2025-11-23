@@ -211,4 +211,20 @@ public class RoleService {
         return roleOptional;
     }
 
+    // 在 RoleService.java 中添加方法
+    private List<Long> getAuthorizedMenuIdsByRole(String roleCode) {
+        // 根据角色代码找到角色ID
+        Role role = roleRepository.findByCode(roleCode);
+        if (role == null) {
+            return new ArrayList<>();
+        }
+
+        // 根据角色ID查询菜单权限
+        List<RoleMenu> roleMenus = roleMenuRepository.findByRoleId(role.getId());
+
+        return roleMenus.stream()
+                .map(roleMenu -> Long.valueOf(roleMenu.getMenuCode()))
+                .collect(Collectors.toList());
+    }
+
 }
