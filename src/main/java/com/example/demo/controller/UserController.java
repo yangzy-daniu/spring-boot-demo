@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ import java.util.Map;
  * @author Administrator
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*") // 先全放行，生产再收窄
 public class UserController {
@@ -31,44 +32,54 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping("/getAllUsers")
     public List<User> all() {
         List<User> users = repo.findAll();
         return users;
     }
 
     // 分页查询用户
+    @GetMapping("/getUsersPage")
+    public Page<User> getUsersByPage(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String role) {
+        return userService.getUsersByPage(page, size, keyword, role);
+    }
 
     @PostMapping("/addUser")
     public User create(@RequestBody User u) {
+        u.setCreateTime(LocalDateTime.now());
+        u.setUpdateTime(LocalDateTime.now());
         return repo.save(u);
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         User existingUser = repo.findById(id).orElseThrow();
         existingUser.setName(user.getName());
-        existingUser.setAge(user.getAge());
         existingUser.setRole(user.getRole());
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             existingUser.setPassword(user.getPassword());
         }
+        existingUser.setUpdateTime(LocalDateTime.now()); // 更新时间
         return repo.save(existingUser);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         repo.deleteById(id);
     }
 
     // 批量删除用户
-    @PostMapping("/users/batch-delete")
+    @PostMapping("/batch-delete")
     public void batchDelete(@RequestBody List<Long> ids) {
         userService.deleteUsers(ids);
     }
 
     // 检查用户名是否存在
-    @GetMapping("/users/check-username")
+    @GetMapping("/check-username")
     public Map<String, Boolean> checkUsername(
             @RequestParam String username,
             @RequestParam(required = false) Long excludeId) {
@@ -81,14 +92,14 @@ public class UserController {
         return Map.of("exists", exists);
     }
 
-    @GetMapping("/user/info")
+    @GetMapping("/info")
     public UserInfoDTO getUserInfo(@RequestHeader("Authorization") String token) {
         String actualToken = token.replace("Bearer ", "");
         Long userId = authService.getUserIdByToken(actualToken);
         return userService.getUserInfo(userId);
     }
 
-    @PutMapping("/user/info")
+    @PutMapping("/info")
     public UserInfoDTO updateUserInfo(@RequestHeader("Authorization") String token,
                                       @RequestBody User user) {
         String actualToken = token.replace("Bearer ", "");

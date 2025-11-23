@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.criteria.Predicate;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,32 @@ public class UserService {
     }
 
     // 分页查询用户
+// 在 UserService 中添加方法
+    public Page<User> getUsersByPage(int page, int size, String keyword, String role) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        if (StringUtils.hasText(keyword) || StringUtils.hasText(role)) {
+            // 构建查询条件
+            Specification<User> spec = (root, query, cb) -> {
+                List<Predicate> predicates = new ArrayList<>();
+
+                if (StringUtils.hasText(keyword)) {
+                    Predicate usernamePredicate = cb.like(root.get("username"), "%" + keyword + "%");
+                    Predicate namePredicate = cb.like(root.get("name"), "%" + keyword + "%");
+                    predicates.add(cb.or(usernamePredicate, namePredicate));
+                }
+
+                if (StringUtils.hasText(role)) {
+                    predicates.add(cb.equal(root.get("role"), role));
+                }
+
+                return cb.and(predicates.toArray(new Predicate[0]));
+            };
+            return userRepository.findAll(spec, pageable);
+        }
+
+        return userRepository.findAll(pageable);
+    }
 
     // 批量删除用户
     public void deleteUsers(List<Long> ids) {
