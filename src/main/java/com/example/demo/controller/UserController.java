@@ -38,13 +38,6 @@ public class UserController {
     }
 
     // 分页查询用户
-    @GetMapping("/users/page")
-    public Page<User> getUsersPage(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String search) {
-        return userService.getUsersWithPagination(page, size, search);
-    }
 
     @PostMapping("/addUser")
     public User create(@RequestBody User u) {

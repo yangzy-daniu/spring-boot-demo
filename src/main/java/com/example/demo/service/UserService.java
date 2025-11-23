@@ -54,25 +54,6 @@ public class UserService {
     }
 
     // 分页查询用户
-    public Page<User> getUsersWithPagination(int page, int size, String search) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-
-        Specification<User> spec = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (search != null && !search.trim().isEmpty()) {
-                String likeSearch = "%" + search + "%";
-                predicates.add(cb.or(
-                        cb.like(root.get("username"), likeSearch),
-                        cb.like(root.get("name"), likeSearch)
-                ));
-            }
-
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-
-        return userRepository.findAll(spec, pageable);
-    }
 
     // 批量删除用户
     public void deleteUsers(List<Long> ids) {

@@ -24,6 +24,7 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request) {
         LoginResponse response = new LoginResponse();
+
         // 查找用户
         User user = userRepository.findByUsername(request.getUsername());
 

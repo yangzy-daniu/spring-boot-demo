@@ -15,7 +15,5 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("SELECT m FROM Menu m WHERE m.parentId IS NULL ORDER BY m.sort ASC")
     List<Menu> findRootMenus();
 
-    List<Menu> findByTypeInOrderBySortAsc(List<Integer> types);
-
-    List<Menu> findAllByOrderBySortAsc();
+    List<Menu> findByTypeOrderBySortAsc(Integer type);
 }

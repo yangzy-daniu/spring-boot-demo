@@ -1,6 +1,7 @@
 package com.example.demo.config;
 
 import com.example.demo.service.AuthService;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +14,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final AuthService authService;
+    @Resource
+    private AuthService authService;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new HandlerInterceptor() {
             @Override
             public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+                // 放行 OPTIONS 请求（CORS 预检）
+                if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                    return true;
+                }
+
                 // 放行登录和公开接口
                 String path = request.getRequestURI();
                 if (path.startsWith("/api/auth/login") || path.equals("/api/users")) {

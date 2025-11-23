@@ -3,9 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-/**
- * @author Administrator
- */
 @Entity
 @Table(name = "users")
 @Data
@@ -14,10 +11,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String username;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String password;
 
     private String name;

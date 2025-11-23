@@ -20,4 +20,5 @@ spring:
 
 logging:
   level:
-    com.demo: debug
+    com.example.demo: debug
+    org.hibernate: debug
