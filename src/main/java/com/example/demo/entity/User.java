@@ -1,29 +1,28 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Administrator
  */
 @Entity
 @Table(name = "users")
-@NoArgsConstructor   // ← 关键
-//@Data
+@Data
 public class User {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+//    @Column(unique = true, nullable = false)
+    private String username;
+
+//    @Column(nullable = false)
+    private String password;
+
     private String name;
     private Integer age;
 
-    /* 手工 setter & getter */
-    public void setName(String name){ this.name = name; }
-    public void setAge(Integer age){ this.age = age; }
-    public Long   getId()   { return id; }
-    public String getName() { return name; }
-    public Integer getAge() { return age; }
+    // 角色字段，可以扩展为角色表
+    private String role = "USER";
 }
