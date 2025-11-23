@@ -19,6 +19,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     List<Menu> findRootMenus();
 
 //    List<Menu> findByTypeOrderBySortAsc(Integer type);
+    List<Menu> findByIdIn(List<String> codes);
 
     // 新增查询方法
     List<Menu> findAllByOrderBySortAsc();

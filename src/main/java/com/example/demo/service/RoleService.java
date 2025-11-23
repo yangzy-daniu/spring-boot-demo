@@ -15,7 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
+import com.example.demo.entity.Menu;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class RoleService {
         return rolePage;
     }
 
-    // 在 RoleService 中添加方法
+    // 如果菜单权限存储的是菜单ID而不是代码
     private void setMenuPermissionsForRoles(List<Role> roles) {
         if (roles == null || roles.isEmpty()) {
             return;
@@ -88,14 +88,32 @@ public class RoleService {
         // 查询这些角色的菜单权限
         List<RoleMenu> allRoleMenus = roleMenuRepository.findAllByRoleIdIn(roleIds);
 
-        // 按角色ID分组
+        // 获取所有涉及的菜单ID
+        List<String> menuIds = allRoleMenus.stream()
+                .map(RoleMenu::getMenuCode) // 假设这里存储的是菜单ID
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 批量查询菜单名称
+        Map<Long, String> menuNameMap = menuRepository.findByIdIn(menuIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        Menu::getId,
+                        Menu::getName
+                ));
+
+        // 按角色ID分组菜单代码
         Map<Long, List<String>> menuPermissionsMap = allRoleMenus.stream()
                 .collect(Collectors.groupingBy(
                         RoleMenu::getRoleId,
-                        Collectors.mapping(RoleMenu::getMenuCode, Collectors.toList())
+                        Collectors.mapping(roleMenu -> {
+                            // 将菜单ID转换为菜单名称，如果找不到名称则使用ID
+                            Long menuId = Long.valueOf(roleMenu.getMenuCode());
+                            return menuNameMap.getOrDefault(menuId, String.valueOf(menuId));
+                        }, Collectors.toList())
                 ));
 
-        // 为每个角色设置菜单权限
+        // 为每个角色设置菜单权限（现在包含的是菜单名称）
         for (Role role : roles) {
             List<String> permissions = menuPermissionsMap.get(role.getId());
             role.setMenuPermissions(permissions != null ? permissions : new ArrayList<>());
