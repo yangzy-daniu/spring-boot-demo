@@ -68,7 +68,37 @@
 		</dependency>
 	</dependencies>
 
+	<!-- 添加 profiles 配置 -->
+	<profiles>
+		<!-- 开发环境 -->
+		<profile>
+			<id>dev</id>
+			<properties>
+				<activated.properties>dev</activated.properties>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+
+		<!-- 生产环境 -->
+		<profile>
+			<id>prod</id>
+			<properties>
+				<activated.properties>prod</activated.properties>
+			</properties>
+		</profile>
+	</profiles>
+
 	<build>
+		<!-- 添加资源过滤 -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
 		<plugins>
 			<!-- 编译器插件 - 支持 Lombok -->
 			<plugin>

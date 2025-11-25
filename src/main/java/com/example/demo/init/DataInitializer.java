@@ -96,7 +96,7 @@ public class DataInitializer {
         profileMenu.setIcon("User");
         profileMenu.setSort(3);
         profileMenu.setType(1); // 菜单
-        profileMenu.setComponent("Index");
+        profileMenu.setComponent("Profile");
         profileMenu.setAvailable(true);
         menuRepository.save(profileMenu);
 

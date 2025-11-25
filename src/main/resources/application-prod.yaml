@@ -1,0 +1,33 @@
+server:
+  port: 9090
+
+spring:
+  datasource:
+    url: jdbc:h2:file:/root/projects/rbac/data/demo
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 123456  # 生产环境建议设置密码
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false  # 生产环境关闭SQL日志
+  h2:
+    console:
+      enabled: false  # 生产环境建议关闭H2控制台
+
+  security:
+    basic:
+      enabled: false
+  management:
+    security:
+      enabled: false
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      -
+logging:
+  level:
+    com.example.demo: info
+    org.hibernate: warn
