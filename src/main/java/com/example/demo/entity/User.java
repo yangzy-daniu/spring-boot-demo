@@ -13,7 +13,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(unique = true, nullable = false)
+    // unique = true：在该字段上创建唯一约束，确保数据库中没有重复值
+    // nullable = false：该字段不允许为 NULL，必须提供值
+    @Column(unique = true, nullable = false)
     private String username;
 
     @Column(nullable = false)

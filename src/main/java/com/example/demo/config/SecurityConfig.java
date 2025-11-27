@@ -45,7 +45,8 @@ public class SecurityConfig {
                         .anyRequest().permitAll()  // 允许所有请求
                 )
                 .csrf(csrf -> csrf.disable())  // 禁用CSRF
-                .cors(cors -> cors.disable()); // 禁用CORS
+                .cors(cors -> cors.disable()) // 禁用CORS
+                .headers(headers -> headers.frameOptions(frame -> frame.disable())); // 允许 H2 控制台嵌入 iframe
 
         return http.build();
     }

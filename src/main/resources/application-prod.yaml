@@ -9,11 +9,14 @@ spring:
     password: 123456  # 生产环境建议设置密码
   jpa:
     hibernate:
-      ddl-auto: update # validate 验证数据库中的表结构是否与实体类（Entity）的映射匹配
+      ddl-auto: update # update 自动添加新表、新字段，不删除现有列；validate 验证数据库中的表结构是否与实体类（Entity）的映射匹配；create 删除所有表和数据，重新创建；create-drop 启动时创建，关闭时删除（数据全丢）；none 无操作
     show-sql: false  # 生产环境关闭SQL日志
   h2:
     console:
-      enabled: false  # 生产环境建议关闭H2控制台
+      enabled: true  # 生产环境建议关闭H2控制台
+      path: /h2-console
+      settings:
+        web-allow-others: true # 允许远程连接
 
   security:
     basic:

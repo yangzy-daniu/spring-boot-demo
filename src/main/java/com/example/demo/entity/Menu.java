@@ -17,6 +17,7 @@ public class Menu {
     @Column(nullable = false)
     private String name;        // 菜单名称
 
+    @Column(nullable = false)
     private String path;        // 路由路径
     private String icon;        // 图标
 

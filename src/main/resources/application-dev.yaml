@@ -15,8 +15,6 @@ spring:
     console:
       enabled: true
       path: /h2-console
-      settings:
-        web-allow-others: true   # Render 需要
 
 logging:
   level:

@@ -337,14 +337,19 @@ public class DataInitializer {
         assignAllMenusToRole(superRole.getId(), allMenus);
         assignAllMenusToRole(adminRole.getId(), allMenus);
 
-        // 普通用户拥有首页、工作台和个人中心权限
+        // 普通用户拥有首页、工作台、个人中心、数据分析权限
         assignMenusToRole(userRole.getId(), "/home");
-        assignMenusToRole(userRole.getId(), "/analysis");
+        assignMenusToRole(userRole.getId(), "/workstation");
         assignMenusToRole(userRole.getId(), "/profile");
+        assignMenusToRole(userRole.getId(), "/analysis");
+        assignMenusToRole(userRole.getId(), "/dashboard");
+        assignMenusToRole(userRole.getId(), "/sysA");
+        assignMenusToRole(userRole.getId(), "/userA");
 
-        // 访客只有首页、工作台查看权限
+        // 访客只有首页、工作台、个人中心查看权限
         assignMenusToRole(userRole.getId(), "/home");
-        assignMenusToRole(guestRole.getId(), "/analysis");
+        assignMenusToRole(guestRole.getId(), "/workstation");
+        assignMenusToRole(guestRole.getId(), "/profile");
 
         log.info("角色菜单权限初始化完成");
     }
