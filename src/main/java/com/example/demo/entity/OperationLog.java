@@ -54,7 +54,6 @@ public class OperationLog {
     @Column(name = "tenant_id")
     private Long tenantId; // 租户ID
 
-    // 在 OperationLog 实体类中添加以下字段
     @Column(name = "status_code")
     private Integer statusCode; // HTTP状态码
 
