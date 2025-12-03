@@ -178,7 +178,7 @@ public class SystemMonitorService {
     @Transactional
     public void cleanupExpiredSessions() {
         LocalDateTime expireTime = LocalDateTime.now().minusMinutes(30); // 30分钟无活动视为过期
-        int deletedCount = onlineUserRepository.deleteExpiredSessions(expireTime);
+        int deletedCount = onlineUserRepository.deleteByLastAccessTimeBefore(expireTime);
         if (deletedCount > 0) {
             systemLogService.logInfo("会话管理",
                     String.format("清理了 %d 个过期会话", deletedCount));

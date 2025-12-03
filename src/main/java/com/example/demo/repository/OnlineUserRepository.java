@@ -27,8 +27,7 @@ public interface OnlineUserRepository extends JpaRepository<OnlineUser, String> 
 
     // 清理过期的会话（比如30分钟无活动）
     @Modifying
-    @Query("DELETE FROM OnlineUser ou WHERE ou.lastAccessTime < :expireTime")
-    int deleteExpiredSessions(@Param("expireTime") LocalDateTime expireTime);
+    int deleteByLastAccessTimeBefore(LocalDateTime expireTime);
 
     // 更新最后访问时间
     @Modifying
