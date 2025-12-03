@@ -120,10 +120,6 @@ public class SystemLogService {
         return systemLogRepository.countByLevelAndTimestampBetween(level, start, end);
     }
 
-    // 获取服务统计
-    public List<Object[]> getServiceStats(LocalDateTime start, LocalDateTime end) {
-        return systemLogRepository.countLogsByService(start, end);
-    }
 
     public void clearLogs() {
         systemLogRepository.deleteAll();

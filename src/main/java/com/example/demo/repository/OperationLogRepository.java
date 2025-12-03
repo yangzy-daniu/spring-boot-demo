@@ -22,11 +22,11 @@ public interface OperationLogRepository extends JpaRepository<OperationLog, Long
     // 统计用户指定时间范围内且指定结果的操作数量
     Long countByOperatorIdAndResultAndCreateTimeBetween(Long operatorId, String result, LocalDateTime start, LocalDateTime end);
 
-    // 按模块统计操作数量
-    Long countByOperatorIdAndModuleAndCreateTimeBetween(Long operatorId, String module, LocalDateTime start, LocalDateTime end);
-
-    // 按模块和结果统计操作数量
-    Long countByOperatorIdAndModuleAndResultAndCreateTimeBetween(Long operatorId, String module, String result, LocalDateTime start, LocalDateTime end);
+//    // 按模块统计操作数量
+//    Long countByOperatorIdAndModuleAndCreateTimeBetween(Long operatorId, String module, LocalDateTime start, LocalDateTime end);
+//
+//    // 按模块和结果统计操作数量
+//    Long countByOperatorIdAndModuleAndResultAndCreateTimeBetween(Long operatorId, String module, String result, LocalDateTime start, LocalDateTime end);
 
     // 查询用户最近的操作记录
     List<OperationLog> findTop5ByOperatorIdOrderByCreateTimeDesc(Long operatorId);

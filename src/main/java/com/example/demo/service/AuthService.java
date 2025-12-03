@@ -42,6 +42,8 @@ public class AuthService {
 
     private final EmailService emailService;
 
+    private final SystemTodoService systemTodoService;
+
 //    private final RedisTemplate<String, String> redisTemplate; // 需要添加Redis依赖和配置
 
 
@@ -134,16 +136,6 @@ public class AuthService {
             return response;
         }
 
-        // 验证邮箱是否已存在（如果需要）
-        if (StringUtils.hasText(request.getEmail())) {
-            User existingUser = userRepository.findByEmail(request.getEmail());
-            if (existingUser != null) {
-                response.setSuccess(false);
-                response.setMessage("邮箱已被注册");
-                return response;
-            }
-        }
-
         // 验证两次密码是否一致
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             response.setSuccess(false);
@@ -183,6 +175,13 @@ public class AuthService {
         response.setMessage("注册成功");
         response.setToken(token);
         response.setUser(userInfo);
+
+        // 自动为管理员创建审核待办
+        try {
+            systemTodoService.createUserApprovalTodo(newUser.getUsername());
+        } catch (Exception e) {
+            log.error("创建用户审核待办失败，但不影响用户注册: {}", e.getMessage());
+        }
 
         return response;
     }

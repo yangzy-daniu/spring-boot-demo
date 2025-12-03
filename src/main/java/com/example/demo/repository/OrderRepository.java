@@ -16,9 +16,9 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
-    Optional<Order> findByOrderNo(String orderNo);
-
-    List<Order> findByStatus(String status);
-
-    boolean existsByOrderNo(String orderNo);
+//    Optional<Order> findByOrderNo(String orderNo);
+//
+//    List<Order> findByStatus(String status);
+//
+//    boolean existsByOrderNo(String orderNo);
 }
