@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.common.security.CustomUserDetails;
 import com.example.demo.dto.UserInfoDTO;
 import com.example.demo.entity.OperationLog;
 import com.example.demo.entity.Role;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -204,5 +206,21 @@ public class UserService {
         } else {
             return duration.toDays() + "天前";
         }
+    }
+
+    /**
+     * 获取当前用户的ID
+     */
+    public String getCurrentUserId(UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new RuntimeException("用户未登录");
+        }
+
+        // 如果使用的是自定义的 UserDetails
+        if (userDetails instanceof CustomUserDetails) {
+            return userDetails.getUsername();
+        }
+
+        throw new RuntimeException("无法获取用户ID");
     }
 }
