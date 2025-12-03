@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -116,5 +117,26 @@ public class MenuController {
         if (token.isEmpty() || "undefined".equals(token) || "null".equals(token)) {
             throw new AccessDeniedException("Token无效");
         }
+    }
+
+    /**
+     * 获取前端路由配置
+     */
+    @GetMapping("/config")
+    public Map<String, Map<String, Object>> getMenuConfig(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        validateToken(authHeader);
+
+        List<Menu> menus = menuService.getAllMenus();
+        Map<String, Map<String, Object>> config = new HashMap<>();
+
+        // 只获取类型为菜单的项（type=1）
+        for (Menu menu : menus) {
+            if (menu.getType() != null && menu.getType() == 1 && menu.getPath() != null && !menu.getPath().isEmpty()) {
+                config.put(menu.getPath(), menu.getFrontendConfig());
+            }
+        }
+
+        return config;
     }
 }

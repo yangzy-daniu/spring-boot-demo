@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "menus")
@@ -48,5 +50,26 @@ public class Menu {
     @Transient
     public Long getValue() {
         return this.id;
+    }
+
+    // 添加获取前端配置的方法
+    @Transient
+    public String getTypeString() {
+        switch (this.type) {
+            case 0: return "DIRECTORY";
+            case 2: return "BUTTON";
+            case 1:
+            default: return "MENU";
+        }
+    }
+
+    // 获取前端配置格式
+    @Transient
+    public Map<String, Object> getFrontendConfig() {
+        Map<String, Object> config = new HashMap<>();
+        config.put("name", this.name);
+        config.put("icon", this.icon);
+        config.put("type", getTypeString());
+        return config;
     }
 }
