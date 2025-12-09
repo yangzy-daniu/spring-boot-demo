@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.CategorySalesDTO;
 import com.example.demo.dto.ProductDTO;
 import com.example.demo.entity.Product;
 import com.example.demo.repository.ProductRepository;
@@ -42,5 +43,23 @@ public class ProductService {
         dto.setStatus(product.getStatus());
         dto.setImageUrl(product.getImageUrl());
         return dto;
+    }
+
+    public List<CategorySalesDTO> getCategorySales(String type) {
+        List<Object[]> results;
+
+        if ("revenue".equals(type)) {
+            results = productRepository.findCategoryRevenue();
+        } else {
+            results = productRepository.findCategorySales();
+        }
+
+        return results.stream()
+                .map(result -> new CategorySalesDTO(
+                        (String) result[0],
+                        ((Number) result[1]).doubleValue()
+                ))
+                .limit(8) // 只取前8个品类
+                .collect(Collectors.toList());
     }
 }

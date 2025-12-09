@@ -111,25 +111,13 @@ public class DataInitializer {
         dashboardMenu.setAvailable(true);
         menuRepository.save(dashboardMenu);
 
-        // 二级菜单 - 系统分析
-        Menu sysAMenu = new Menu();
-        sysAMenu.setName("系统分析");
-        sysAMenu.setPath("/sysA");
-        sysAMenu.setIcon("Histogram");
-        sysAMenu.setComponent("SystemAnalysis");
-        sysAMenu.setSort(2);
-        sysAMenu.setType(1); // 菜单
-        sysAMenu.setParentId(analysisMenu.getId());
-        sysAMenu.setAvailable(true);
-        menuRepository.save(sysAMenu);
-
         // 二级菜单 - 用户分析
         Menu userAMenu = new Menu();
         userAMenu.setName("用户分析");
         userAMenu.setPath("/userA");
         userAMenu.setIcon("PieChart");
         userAMenu.setComponent("UserAnalysis");
-        userAMenu.setSort(3);
+        userAMenu.setSort(2);
         userAMenu.setType(1); // 菜单
         userAMenu.setParentId(analysisMenu.getId());
         userAMenu.setAvailable(true);
